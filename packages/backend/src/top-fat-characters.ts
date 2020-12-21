@@ -1,15 +1,48 @@
 import { Context, Next } from 'koa';
+import axios from 'axios';
+import { constants } from 'http2';
 
-// Replace this function with what is necessary to complete the mission! 🚀
-export default async function topFatCharacters(
-  ctx: Context,
-  next: Next
-): Promise<void> {
-  ctx.status = 501;
-  ctx.body = JSON.stringify(
-    'This method is not implemented yet, but when it is, it will be awesome 😎'
-  );
+type SwapiCharacter = {
+  height: string;
+  mass: string;
+};
 
-  // Lets not forget to call the next middleware
-  await next();
+function calculateBmi({ height, mass }: SwapiCharacter): number {
+  const heightInMeters = parseInt(height) / 100;
+  return parseInt(mass.replace(/,/g, '')) / heightInMeters ** 2;
+}
+
+async function fetchCharacters(
+  url = 'https://swapi.dev/api/people/?page=1',
+  characters: SwapiCharacter[] = []
+): Promise<SwapiCharacter[]> {
+  const response = await axios.get(url);
+  const { status, data } = response;
+  if (status === constants.HTTP_STATUS_OK) {
+    const enhancedCharacters = [...characters, ...data.results];
+    if (!data.next) {
+      return enhancedCharacters;
+    }
+    return fetchCharacters(data.next, enhancedCharacters);
+  } else {
+    throw new Error(`Unable to read characters, from ${response}`);
+  }
+}
+
+export default async function initializeTopFatCharacters(): Promise<
+  (ctx: Context, next: Next) => Promise<void>
+> {
+  const characters = (await fetchCharacters()).map((character) => ({
+    ...character,
+    bmi: calculateBmi(character),
+  }));
+  return async function topFatCharacters(ctx, next): Promise<void> {
+    ctx.status = constants.HTTP_STATUS_OK;
+    ctx.body = {
+      count: characters.length,
+      characters: characters,
+    };
+    // Lets not forget to call the next middleware
+    await next();
+  };
 }
