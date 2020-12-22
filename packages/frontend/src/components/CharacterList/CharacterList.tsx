@@ -2,37 +2,14 @@ import React, { Component, ReactNode } from 'react';
 import UnderConstruction from './under_construction.svg';
 import Cancel from './undraw_cancel.svg';
 import styles from './CharacterList.module.scss';
-
-interface Character {
-  id: string;
-  name: string;
-  height: string;
-  mass: string;
-  bmi: number | null;
-}
-
-type Characters = {
-  count: number;
-  characters: Array<Character>;
-};
+import CharacterTable from './CharacterTable';
+import { Character } from './types';
 
 interface CharacterListState {
   isLoading: boolean;
-  data?: Characters;
+  data?: Array<Character>;
   error?: { statusCode?: number; message: string };
 }
-
-const characterSort = (a: Character, b: Character): number => {
-  const aBmi = a.bmi || -10;
-  const bBmi = b.bmi || -10;
-  if (aBmi < bBmi) {
-    return 1;
-  }
-  if (aBmi > bBmi) {
-    return -1;
-  }
-  return 0;
-};
 
 export default class CharacterList extends Component<
   unknown,
@@ -148,30 +125,7 @@ export default class CharacterList extends Component<
     }
   };
 
-  renderListData = (data: Characters): ReactNode => {
-    const { characters } = data;
-    return (
-      <span className={styles.tableWrapper}>
-        <table>
-          <tr>
-            <th>Name</th>
-            <th>Height</th>
-            <th>Mass</th>
-            <th>BMI</th>
-          </tr>
-          {characters
-            .sort(characterSort)
-            .slice(0, 20)
-            .map(({ id, name, height, mass, bmi }) => (
-              <tr key={id} className={styles.tableRow}>
-                <td>{name}</td>
-                <td>{height}</td>
-                <td>{mass}</td>
-                <td>{bmi && bmi.toFixed(2)}</td>
-              </tr>
-            ))}
-        </table>
-      </span>
-    );
+  renderListData = (characters: Character[]): ReactNode => {
+    return <CharacterTable characters={characters} />;
   };
 }

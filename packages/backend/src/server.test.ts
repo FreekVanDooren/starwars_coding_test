@@ -71,41 +71,38 @@ describe('Can get characters', () => {
 
     expect(response.status).toBe(constants.HTTP_STATUS_OK);
     expect(response.body).toEqual(
-      expect.objectContaining({
-        count: 3,
-        characters: [
-          {
-            id: 1,
-            name: 'Joatin Granlund',
-            bmi: 26.027582477014604,
-            height: '172',
-            mass: '77',
-            created: '2020-12-20T13:50:51.644000Z',
-            edited: '2020-12-20T21:17:56.891000Z',
-            url: 'http://unknown.universe.com/api/people/1/',
-          },
-          {
-            id: 2,
-            name: 'Kami Gerami',
-            bmi: 26.89232313815483,
-            height: '167',
-            mass: '75',
-            created: '2020-12-20T15:10:51.357000Z',
-            edited: '2020-12-20T21:17:56.891000Z',
-            url: 'http://unknown.universe.com/api/people/2',
-          },
-          {
-            id: 3,
-            name: 'Tommy Malmqvist',
-            bmi: 34.72222222222222,
-            height: '96',
-            mass: '32',
-            created: '2020-12-10T15:11:50.376000Z',
-            edited: '2020-12-20T21:17:56.891000Z',
-            url: 'http://unknown.universe.com/api/people/3/',
-          },
-        ],
-      })
+      expect.arrayContaining([
+        {
+          id: 1,
+          name: 'Joatin Granlund',
+          bmi: 26.027582477014604,
+          height: '172',
+          mass: '77',
+          created: '2020-12-20T13:50:51.644000Z',
+          edited: '2020-12-20T21:17:56.891000Z',
+          url: 'http://unknown.universe.com/api/people/1/',
+        },
+        {
+          id: 2,
+          name: 'Kami Gerami',
+          bmi: 26.89232313815483,
+          height: '167',
+          mass: '75',
+          created: '2020-12-20T15:10:51.357000Z',
+          edited: '2020-12-20T21:17:56.891000Z',
+          url: 'http://unknown.universe.com/api/people/2',
+        },
+        {
+          id: 3,
+          name: 'Tommy Malmqvist',
+          bmi: 34.72222222222222,
+          height: '96',
+          mass: '32',
+          created: '2020-12-10T15:11:50.376000Z',
+          edited: '2020-12-20T21:17:56.891000Z',
+          url: 'http://unknown.universe.com/api/people/3/',
+        },
+      ])
     );
   });
 });

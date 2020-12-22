@@ -63,10 +63,7 @@ export default async function initializeTopFatCharacters(): Promise<
   );
   return async function topFatCharacters(ctx, next): Promise<void> {
     ctx.status = constants.HTTP_STATUS_OK;
-    ctx.body = {
-      count: characters.length,
-      characters: characters,
-    };
+    ctx.body = characters;
     // Lets not forget to call the next middleware
     await next();
   };
