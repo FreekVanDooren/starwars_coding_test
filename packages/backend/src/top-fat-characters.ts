@@ -3,8 +3,22 @@ import axios from 'axios';
 import { constants } from 'http2';
 
 type SwapiCharacter = {
+  name: string;
   height: string;
   mass: string;
+  created: string;
+  edited: string;
+  url: string;
+};
+
+type Character = {
+  id: number;
+  name: string;
+  height: string;
+  mass: string;
+  bmi: number;
+  created: string;
+  edited: string;
 };
 
 function calculateBmi({ height, mass }: SwapiCharacter): number {
@@ -29,13 +43,24 @@ async function fetchCharacters(
   }
 }
 
+function extractId({ url }: SwapiCharacter): number {
+  const matches = /\/(\d+)\/?$/.exec(url);
+  if (!matches) {
+    return -1;
+  }
+  return parseInt(matches[1]);
+}
+
 export default async function initializeTopFatCharacters(): Promise<
   (ctx: Context, next: Next) => Promise<void>
 > {
-  const characters = (await fetchCharacters()).map((character) => ({
-    ...character,
-    bmi: calculateBmi(character),
-  }));
+  const characters: Character[] = (await fetchCharacters()).map(
+    (character) => ({
+      ...character,
+      bmi: calculateBmi(character),
+      id: extractId(character),
+    })
+  );
   return async function topFatCharacters(ctx, next): Promise<void> {
     ctx.status = constants.HTTP_STATUS_OK;
     ctx.body = {

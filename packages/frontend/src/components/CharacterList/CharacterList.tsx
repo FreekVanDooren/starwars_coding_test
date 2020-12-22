@@ -6,14 +6,33 @@ import styles from './CharacterList.module.scss';
 interface Character {
   id: string;
   name: string;
-  bmi: number;
+  height: string;
+  mass: string;
+  bmi: number | null;
 }
+
+type Characters = {
+  count: number;
+  characters: Array<Character>;
+};
 
 interface CharacterListState {
   isLoading: boolean;
-  data?: Array<Character>;
+  data?: Characters;
   error?: { statusCode?: number; message: string };
 }
+
+const characterSort = (a: Character, b: Character): number => {
+  const aBmi = a.bmi || -10;
+  const bBmi = b.bmi || -10;
+  if (aBmi < bBmi) {
+    return 1;
+  }
+  if (aBmi > bBmi) {
+    return -1;
+  }
+  return 0;
+};
 
 export default class CharacterList extends Component<
   unknown,
@@ -69,7 +88,7 @@ export default class CharacterList extends Component<
     if (isLoading && data === undefined && error === undefined) {
       return this.renderListLoading();
     } else if (data) {
-      return this.renderListData();
+      return this.renderListData(data);
     } else if (error) {
       return this.renderListError();
     } else {
@@ -129,10 +148,30 @@ export default class CharacterList extends Component<
     }
   };
 
-  renderListData = (): ReactNode => {
-    // TODO: Implement the list here
+  renderListData = (data: Characters): ReactNode => {
+    const { characters } = data;
     return (
-      <span className={styles.infoText}>TODO: No list implemented yet</span>
+      <span className={styles.tableWrapper}>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Height</th>
+            <th>Mass</th>
+            <th>BMI</th>
+          </tr>
+          {characters
+            .sort(characterSort)
+            .slice(0, 20)
+            .map(({ id, name, height, mass, bmi }) => (
+              <tr key={id} className={styles.tableRow}>
+                <td>{name}</td>
+                <td>{height}</td>
+                <td>{mass}</td>
+                <td>{bmi && bmi.toFixed(2)}</td>
+              </tr>
+            ))}
+        </table>
+      </span>
     );
   };
 }
