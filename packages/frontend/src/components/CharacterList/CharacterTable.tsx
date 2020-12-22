@@ -2,6 +2,8 @@ import styles from './CharacterTable.module.scss';
 import React, { FunctionComponent, useState } from 'react';
 import { Character } from './types';
 
+const DEFAULT_PAGE_SIZE = 20;
+
 const characterSort = (a: Character, b: Character): number => {
   const aBmi = a.bmi || -10;
   const bBmi = b.bmi || -10;
@@ -17,11 +19,10 @@ const characterSort = (a: Character, b: Character): number => {
 type Props = {
   characters: Character[];
 };
-
 const CharacterTable: FunctionComponent<Props> = ({ characters }) => {
   const [listStart, setListStart] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
-  const [temporaryPageSize, setTemporaryPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [temporaryPageSize, setTemporaryPageSize] = useState(DEFAULT_PAGE_SIZE);
   const setNewStart = (newStart: number, page = pageSize): void => {
     setListStart(newStart - (newStart % page));
   };
@@ -51,9 +52,12 @@ const CharacterTable: FunctionComponent<Props> = ({ characters }) => {
     <span>
       <input
         placeholder={`Page size: ${pageSize}`}
-        onChange={(event): void =>
-          setTemporaryPageSize(parseInt(event.target.value))
-        }
+        onChange={(event): void => {
+          const value = event.target.value;
+          return setTemporaryPageSize(
+            value ? parseInt(value) : DEFAULT_PAGE_SIZE
+          );
+        }}
       />
       <button className={styles.button} onClick={changePageSize}>
         Change
