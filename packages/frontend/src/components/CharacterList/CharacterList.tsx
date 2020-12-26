@@ -20,7 +20,7 @@ export default class CharacterList extends Component<
   };
 
   public componentDidMount(): void {
-    fetch('http://localhost:3000/top-fat-characters').then(
+    fetch('http://localhost:3000/fat-characters').then(
       async (data) => {
         if (data.ok) {
           this.setState({

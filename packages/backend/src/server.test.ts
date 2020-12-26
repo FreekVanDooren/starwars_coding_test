@@ -67,7 +67,7 @@ describe('Can get characters', () => {
   });
 
   test('Characters are retrieved from remote', async () => {
-    const response = await request(serverInstance).get('/top-fat-characters');
+    const response = await request(serverInstance).get('/fat-characters');
 
     expect(response.status).toBe(constants.HTTP_STATUS_OK);
     expect(response.body).toEqual(
